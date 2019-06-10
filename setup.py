@@ -18,7 +18,8 @@ Python version secp256k1 keypair generator signature and verify, ecdh secret sha
       include_package_data=True,
       zip_safe=True,
       install_requires=[
-          "point"
+          "point",
+          "salsa20>=0.3.0"
       ],
       entry_points="""
       # -*- Entry points: -*-

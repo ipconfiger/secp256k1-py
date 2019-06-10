@@ -30,4 +30,18 @@ Python version secp256k1 keypair generator signature and verify, ecdh secret sha
     signature = alice.privateKey.sign(message)
     alice.publicKey.verify(message, signature) # will return True
     
+
+#### ECC Cipher: encrypt and decrypt data use salsa20
+ 
+    from secp256k1py import secp256k1
+    alice = secp256k1.make_keypair()
+    bob = secp256k1.make_keypair()
+    message = "hi bob, i am alice"
+    enc_data = bob.publicKey.encrypt(alice.privateKey, message) # alice say to bob return {'enc': encrypted base64 string, 'iv': base64 iv string}
+    
+    print bob.privateKey.decrypt(alice.publicKey, enc_data['enc'], enc_data['iv']) 
+    # will print :  hi bob, i am alice  
+    
+
+    
 #Enjoy it!
