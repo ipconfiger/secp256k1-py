@@ -1,10 +1,10 @@
 # coding=utf8
 
-import random
-import hashlib
 import base64
+import hashlib
+import random
 from os import urandom
-from secp256k1py.functions import *
+import secp256k1py.functions
 from salsa20 import Salsa20_xor
 
 
@@ -25,7 +25,7 @@ class PrivateKey():
         :param publickey:
         :return:
         """
-        point = scalar_mult(self.d, publickey.Q)
+        point = secp256k1py.functions.scalar_mult(self.d, publickey.Q)
         x, y = point
         return "%s%s" % (hex(x)[2:-1], hex(y)[2:-1])
 
@@ -35,7 +35,7 @@ class PrivateKey():
         :param message:
         :return:
         """
-        point = sign_message(self.d, message)
+        point = secp256k1py.functions.sign_message(self.d, message)
         x, y = point
         return "%s%s" % (hex(x)[2:-1], hex(y)[2:-1])
 
@@ -76,7 +76,7 @@ class PublicKey():
             long(signature[:64], 16),
             long(signature[64:], 16)
         )
-        return verify_signature(self.Q, message, point)
+        return secp256k1py.functions.verify_signature(self.Q, message, point)
 
     def encrypt(self, privateKey, message):
         """
@@ -95,7 +95,6 @@ class PublicKey():
             iv=b64_iv
         )
 
-
     def __repr__(self):
         x, y = self.Q
         return "%s%s" % (hex(x)[2:-1], hex(y)[2:-1])
@@ -109,6 +108,6 @@ class KeyPair():
 
 def make_keypair():
     """Generates a random private-public key pair."""
-    private_key = random.randrange(1, curve.n)
-    public_key = scalar_mult(private_key, curve.g)
+    private_key = random.randrange(1, secp256k1py.functions.curve.n)
+    public_key = secp256k1py.functions.scalar_mult(private_key, secp256k1py.functions.curve.g)
     return KeyPair(PrivateKey(private_key), PublicKey(public_key))

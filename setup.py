@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
-import sys, os
+from Cython.Build import cythonize
 
-version = '0.0.2'
+version = '0.0.4'
 
 setup(name='secp256k1py',
       version=version,
@@ -21,6 +21,7 @@ Python version secp256k1 keypair generator signature and verify, ecdh secret sha
           "point",
           "salsa20>=0.3.0"
       ],
+      ext_modules=cythonize('secp256k1py/curv.pyx'),
       entry_points="""
       # -*- Entry points: -*-
       """,
