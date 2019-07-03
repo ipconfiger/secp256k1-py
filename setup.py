@@ -1,7 +1,9 @@
 from setuptools import setup, find_packages
-from Cython.Build import cythonize
+from distutils.extension import Extension
+from Cython.Build import cythonize, build_ext
 
-version = '0.0.4'
+version = '0.1.2'
+
 
 setup(name='secp256k1py',
       version=version,
@@ -15,13 +17,17 @@ Python version secp256k1 keypair generator signature and verify, ecdh secret sha
       url='https://github.com/ipconfiger/secp256k1-py',
       license='MIT',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
+      package_data={
+              'secp256k1py': ['*.pyx',]
+      },
       include_package_data=True,
       zip_safe=True,
       install_requires=[
           "point",
           "salsa20>=0.3.0"
       ],
-      ext_modules=cythonize('secp256k1py/curv.pyx'),
+      cmdclass={'build_ext': build_ext},
+      ext_modules=cythonize([Extension('*', ['secp256k1py/curv.pyx'])]),
       entry_points="""
       # -*- Entry points: -*-
       """,

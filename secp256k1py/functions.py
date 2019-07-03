@@ -1,7 +1,7 @@
 import hashlib
 import random
 from sys import version_info
-from .curv import curve, scalar_mult, inverse_mod, point_add
+from .curv import curve, scalar_mult, inverse_mod, point_add, testBit, get_y_by_x
 
 
 def hash_message(message):
