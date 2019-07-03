@@ -65,10 +65,10 @@ class PrivateKey():
         :return:
         """
         if version_info.major != 2:
-            secret = self.generate_secret(publicKey).encode()
+            secret = self.generate_secret(publicKey)
         else:
             secret = self.generate_secret(publicKey)
-        key = hashlib.sha256(secret).digest()
+        key = secret2key(secret)
         raw_enc_bytes = base64.urlsafe_b64decode(b64encrypted)
         iv = base64.urlsafe_b64decode(b64iv)
         if version_info.major != 2:
@@ -124,6 +124,7 @@ class PublicKey():
             )
         return secp256k1py.functions.verify_signature(self.Q, message, point)
 
+
     def encrypt(self, privateKey, message):
         """
         用共享秘密加密数据
@@ -131,11 +132,10 @@ class PublicKey():
         :return:
         """
         if version_info.major != 2:
-            secret = privateKey.generate_secret(self).encode()
-            message = message.encode('utf8')
+            secret = privateKey.generate_secret(self)
         else:
             secret = privateKey.generate_secret(self)
-        key = hashlib.sha256(secret).digest()
+        key = secret2key(secret)
         iv = urandom(8)
         enc = Salsa20_xor(message, iv, key)
         b64_enc = base64.urlsafe_b64encode(enc)
@@ -186,3 +186,11 @@ def left_padding(s, width):
     if fill_width:
         return '%s%s' % (fill_data[:fill_width], s)
     return s
+
+
+def secret2key(secret):
+    if version_info.major != 2:
+        btarray = bytes.fromhex(secret)
+    else:
+        btarray = secret.decode('hex')
+    return btarray[:32]

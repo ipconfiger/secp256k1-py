@@ -27,8 +27,12 @@ class TestECDH(TestCase):
             secret2 = bob_pri.generate_secret(alice_pub)
             self.assertEqual(secret1, secret2)
 
-    def test_sign_message(self):
-        print(functions.inverse_mod(1000, 0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f))
+    def test_encrypt_data(self):
+        remote_pub = secp256k1.PublicKey.restore('02f20657420110456cf533b440ead4ff6cce5d7d811c842adaf20c819a62d2e700')
+        local_private = secp256k1.PrivateKey.restore('d0b677941482d74f0ad03c67aec5a1e4dfc9babe51e241aa4a3fc2981ba159c')
+        raw_text = "test test test"
+        enc = remote_pub.encrypt(local_private, raw_text.encode())
+        print(enc)
         self.assertEqual(1, 1)
 
 
@@ -36,12 +40,14 @@ class TestECDH(TestCase):
         with open('/Users/alex/study/test.csv', 'r') as f:
             lines = f.readlines()
             for line in lines:
-                pub_str, pri_str = line.split(',')
+                pub_str, pri_str, origin_x, origin_y = line.strip().split(',')
                 pubkey = secp256k1.PublicKey.restore(pub_str)
                 prikey = secp256k1.PrivateKey.restore(pri_str)
-                raw_txt = 'test test test'
-                sig = prikey.sign(raw_txt.encode())
-                self.assertTrue(pubkey.verify(raw_txt.encode(), sig))
+                x, y = pubkey.Q
+                restore_y = hex(y)[2:]
+                restore_x = hex(x)[2:]
+                self.assertEqual(origin_x, restore_x)
+                self.assertEqual(origin_y, restore_y)
 
 
 
