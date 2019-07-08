@@ -36,10 +36,10 @@ class PrivateKey():
         point = secp256k1py.functions.scalar_mult(self.d, publickey.Q)
         x, y = point
         if version_info.major != 2:
-            secret = "%s%s" % (hex(x)[2:], hex(y)[2:])
+            secret = "%s%s" % (left_padding(hex(x)[2:], 64), left_padding(hex(y)[2:], 64))
         else:
 
-            secret = "%s%s" % (hex(x)[2:-1], hex(y)[2:-1])
+            secret = "%s%s" % (left_padding(hex(x)[2:-1], 64), left_padding(hex(y)[2:-1], 64))
         return secret
 
 
