@@ -35,6 +35,15 @@ class TestECDH(TestCase):
         print(enc)
         self.assertEqual(1, 1)
 
+    def test_encrypt_and_decrypt(self):
+        alice = secp256k1.make_keypair()
+        bob = secp256k1.make_keypair()
+        raw_text = "test test test"
+        enc = alice.publicKey.encrypt(bob.privateKey, raw_text.encode(), raw=True)
+        res = bob.privateKey.decrypt(alice.publicKey, enc['enc'], None)
+        print(res)
+        self.assertEqual(raw_text, res)
+
 
     def test_remote(self):
         with open('/Users/alex/study/test.csv', 'r') as f:

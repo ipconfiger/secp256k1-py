@@ -68,9 +68,9 @@ class PrivateKey():
             secret = self.generate_secret(publicKey)
         else:
             secret = self.generate_secret(publicKey)
-        key = secret2key(secret)
-        raw_enc_bytes = base64.urlsafe_b64decode(b64encrypted)
-        iv = base64.urlsafe_b64decode(b64iv)
+        key, raw_iv = secret2key(secret)
+        raw_enc_bytes = base64.urlsafe_b64decode(b64encrypted) if b64iv else b64encrypted
+        iv = base64.urlsafe_b64decode(b64iv) if b64iv else raw_iv
         if version_info.major != 2:
             raw_bytes = Salsa20_xor(raw_enc_bytes, iv, key)
             return raw_bytes.decode('utf8')
@@ -125,7 +125,7 @@ class PublicKey():
         return secp256k1py.functions.verify_signature(self.Q, message, point)
 
 
-    def encrypt(self, privateKey, message):
+    def encrypt(self, privateKey, message, raw=False):
         """
         用共享秘密加密数据
         :param privateKey:
@@ -135,14 +135,13 @@ class PublicKey():
             secret = privateKey.generate_secret(self)
         else:
             secret = privateKey.generate_secret(self)
-        key = secret2key(secret)
-        iv = urandom(8)
+        key, iv = secret2key(secret)
         enc = Salsa20_xor(message, iv, key)
-        b64_enc = base64.urlsafe_b64encode(enc)
+        b64_enc = enc if raw else base64.urlsafe_b64encode(enc)
         b64_iv = base64.urlsafe_b64encode(iv)
         if version_info.major != 2:
             return dict(
-                enc=b64_enc.decode(),
+                enc=b64_enc if raw else b64_enc.decode(),
                 iv=b64_iv.decode()
             )
         else:
@@ -193,4 +192,4 @@ def secret2key(secret):
         btarray = bytes.fromhex(secret)
     else:
         btarray = secret.decode('hex')
-    return btarray[:32]
+    return btarray[:32], btarray[32: 40]

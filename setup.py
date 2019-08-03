@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from distutils.extension import Extension
 from Cython.Build import cythonize, build_ext
 
-version = '0.1.5'
+version = '0.1.6'
 
 
 setup(name='secp256k1py',
