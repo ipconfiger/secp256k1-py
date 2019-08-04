@@ -69,7 +69,9 @@ class PrivateKey():
         else:
             secret = self.generate_secret(publicKey)
         key, raw_iv = secret2key(secret)
+
         raw_enc_bytes = base64.urlsafe_b64decode(b64encrypted) if b64iv else b64encrypted
+
         iv = base64.urlsafe_b64decode(b64iv) if b64iv else raw_iv
         if version_info.major != 2:
             raw_bytes = Salsa20_xor(raw_enc_bytes, iv, key)
