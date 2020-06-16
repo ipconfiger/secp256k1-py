@@ -64,6 +64,7 @@ class TestECDH(TestCase):
         bob = secp256k1.make_keypair()
         raw_text = "快使用双节棍呵呵哈黑"
         enc = alice.publicKey.encrypt(bob.privateKey, raw_text.encode(), raw=True)
+        print("enc:%s" % enc)
 
         res = bob.privateKey.decrypt(alice.publicKey, enc['enc'], None)
 
